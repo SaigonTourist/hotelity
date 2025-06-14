@@ -3,22 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Reservas de Hotel</title>
+    <title>Sistema de Reservas de Hotelity</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>🏨 Sistema de Reservas de Hotel</h1>
-        <div class="info">
-            <p><strong>Instrucciones:</strong></p>
-            <p>Haz clic en "Iniciar Reserva" para comenzar el proceso de reserva.</p>
-            <p>Sigue las instrucciones en los cuadros de diálogo para completar tu reserva.</p>
-        </div>
-        <button onclick="iniciarSistema()">Iniciar Reserva</button>
-        <button onclick="mostrarInfo()">Ver Información de Habitaciones</button>
+        <header class="header">
+            <h1>🏨 Hotelity</h1>
+            <p>Sistema de Reservas Online - Gestión Completa de Hospedaje</p>
+        </header>
+
+        <main class="main-content">
+            <section class="content-section">
+                <!-- Menu -->
+                <div id="menu-principal" class="menu-section">
+                    <h2>🏠 Menú Principal</h2>
+                    <div class="menu-buttons">
+                        <button id="btn-nueva-reserva" class="btn btn-primary">
+                            ✨ Nueva Reserva
+                        </button>
+                        <button id="btn-ver-reservas" class="btn btn-secondary">
+                            📋 Ver Reservas
+                        </button>
+                        <button id="btn-ver-habitaciones" class="btn btn-info">
+                            🛏️ Tipos de Habitaciones
+                        </button>
+                        <button id="btn-estadisticas" class="btn btn-success">
+                            📊 Estadísticas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenedor de alertas -->
+                <div id="alertas-container"></div>
+
+                <!-- Nueva Reserva -->
+                <div id="seccion-nueva-reserva" class="hidden">
+                    <div class="step-indicator">
+                        <div class="step active" id="step-1">
+                            <span>1</span> Habitación
+                        </div>
+                        <div class="step" id="step-2">
+                            <span>2</span> Huéspedes
+                        </div>
+                        <div class="step" id="step-3">
+                            <span>3</span> Fechas
+                        </div>
+                        <div class="step" id="step-4">
+                            <span>4</span> Confirmación
+                        </div>
+                    </div>
+
+                    <!-- Habitacion -->
+                    <div id="paso-habitacion" class="paso-reserva">
+                        <h2>🛏️ Selecciona el tipo de habitación</h2>
+                        <div id="habitaciones-container" class="habitaciones-grid">
+                            <!-- habitaciones -->
+                        </div>
+                        <div style="margin-top: 30px; text-align: right;">
+                            <button id="btn-siguiente-huespedes" class="btn btn-primary" disabled>
+                                Siguiente: Huéspedes →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Datos -->
+                    <div id="paso-huespedes" class="paso-reserva hidden">
+                        <h2>👥 Datos de los huéspedes</h2>
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="cantidad-huespedes">Cantidad de huéspedes:</label>
+                                <select id="cantidad-huespedes">
+                                    <option value="">Seleccionar...</option>
+                                </select>
+                            </div>
+                            <div id="huespedes-forms-container" class="huespedes-container">
+                                <!-- formularios -->
+                            </div>
+                        </div>
+                        <div style="margin-top: 30px; display: flex; justify-content: space-between;">
+                            <button id="btn-volver-habitacion" class="btn btn-secondary">
+                                ← Volver a Habitaciones
+                            </button>
+                            <button id="btn-siguiente-fechas" class="btn btn-primary" disabled>
+                                Siguiente: Fechas →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div id="paso-fechas" class="paso-reserva hidden">
+                        <h2>📅 Fechas de estadía</h2>
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="fecha-entrada">Fecha de entrada:</label>
+                                <input type="date" id="fecha-entrada" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha-salida">Fecha de salida:</label>
+                                <input type="date" id="fecha-salida" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="noches">Número de noches:</label>
+                                <input type="number" id="noches" min="1" required readonly>
+                            </div>
+                        </div>
+                        <div style="margin-top: 30px; display: flex; justify-content: space-between;">
+                            <button id="btn-volver-huespedes" class="btn btn-secondary">
+                                ← Volver a Huéspedes
+                            </button>
+                            <button id="btn-siguiente-confirmacion" class="btn btn-primary" disabled>
+                                Siguiente: Confirmación →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Confirmacion -->
+                    <div id="paso-confirmacion" class="paso-reserva hidden">
+                        <h2>✅ Confirmar reserva</h2>
+
+                        
+                        <div id="resumen-reserva" class="form-section">
+                        </div>
+
+
+                        <div style="margin-top: 30px; display: flex; justify-content: space-between;">
+                            <button id="btn-volver-fechas" class="btn btn-secondary">
+                                ← Volver a Fechas
+                            </button>
+                            <button id="btn-confirmar-reserva" class="btn btn-success">
+                                🎉 Confirmar Reserva
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ver Reservas -->
+                <div id="seccion-ver-reservas" class="hidden">
+                    <h2>📋 Reservas Realizadas</h2>
+                    <div id="reservas-container">
+                        <!-- reservas -->
+                    </div>
+                </div>
+
+                <!-- Ver Habitaciones -->
+                <div id="seccion-ver-habitaciones" class="hidden">
+                    <h2>🛏️ Tipos de Habitaciones Disponibles</h2>
+                    <div id="info-habitaciones-container" class="habitaciones-grid">
+                        <!-- Información de habitaciones -->
+                    </div>
+                </div>
+
+                <!-- Estadísticas -->
+                <div id="seccion-estadisticas" class="hidden">
+                    <h2>📊 Estadísticas del Hotel</h2>
+                    <div id="estadisticas-container">
+                        <!-- Estadísticas  -->
+                    </div>
+                </div>
+            </section>
+
+            <aside class="sidebar">
+                <div class="stats-card">
+                    <h3>📊 Resumen General</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="total-reservas">0</span>
+                            <span>Reservas</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="ingresos-totales">$0</span>
+                            <span>Ingresos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h3 style="color: #2c3e50; margin-bottom: 15px;">🏨 Información</h3>
+                    <p style="color: #666; line-height: 1.6; margin-bottom: 10px;">
+                        Sistema completo de gestión de reservas hoteleras con persistencia de datos.
+                    </p>
+                    <p style="color: #666; line-height: 1.6;">
+                        <strong>Características:</strong><br>
+                        • 4 tipos de habitaciones<br>
+                        • Gestión de huéspedes<br>
+                        • Cálculo automático de precios<br>
+                    </p>
+                </div>
+            </aside>
+        </main>
     </div>
-
-    <script src=reservas.js></script>
-
+    <script src="reservas.js"></script>
 </body>
 </html>
