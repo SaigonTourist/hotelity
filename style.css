@@ -268,6 +268,52 @@ body {
     color: white;
 }
 
+/* Vanilla Calendar */
+
+.vanilla-calendar {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.vanilla-calendar-day_selected {
+    background: #3498db !important;
+    color: white !important;
+}
+
+.vanilla-calendar-day_range {
+    background: rgba(52, 152, 219, 0.3) !important;
+}
+
+.vanilla-calendar-day_range-start,
+.vanilla-calendar-day_range-end {
+    background: #3498db !important;
+    color: white !important;
+}
+
+.vanilla-calendar-day_today {
+    border: 2px solid #e74c3c;
+}
+
+.vanilla-calendar-header {
+    margin-bottom: 15px;
+}
+
+.vanilla-calendar-arrow {
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+}
+
+.vanilla-calendar-arrow:hover {
+    background: #2980b9;
+}
+
 @media (max-width: 768px) {
     .main-content {
         grid-template-columns: 1fr;

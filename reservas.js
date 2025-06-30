@@ -10,6 +10,7 @@ const tiposHabitacion = [
         this.reservas = this.cargarReservasDesdeStorage();
         this.reservaActual = this.inicializarReservaVacia();
         this.pasoActual = 1;
+        this.calendario = null;
         
         this.inicializarEventos();
         this.mostrarMenuPrincipal();
@@ -244,6 +245,9 @@ const tiposHabitacion = [
         this.reservaActual.huespedes = huespedes;
         return true;
     }
+
+
+    // Calendario Vanilla Calendar
  
     irAPasoFechas() {
         if (!this.recopilarDatosHuespedes()) {
@@ -253,45 +257,163 @@ const tiposHabitacion = [
  
         this.pasoActual = 3;
         this.mostrarPaso(3);
-        this.configurarFechas();
+        this.inicializarCalendario();
         this.actualizarIndicadorPasos();
     }
- 
-    configurarFechas() {
+
+
+
+
+
+    // 
+    inicializarCalendario() {
+        const calendarElement = document.getElementById('calendario-reserva');
+        
+        if (this.calendario) {
+            calendarElement.innerHTML = '';
+        }
+    
         const hoy = new Date();
-        const manana = new Date(hoy);
-        manana.setDate(hoy.getDate() + 1);
- 
-        document.getElementById('fecha-entrada').min = hoy.toISOString().split('T')[0];
-        document.getElementById('fecha-salida').min = manana.toISOString().split('T')[0];
-    }
- 
-    calcularNoches() {
-        const fechaEntrada = document.getElementById('fecha-entrada').value;
-        const fechaSalida = document.getElementById('fecha-salida').value;
- 
-        if (fechaEntrada && fechaSalida) {
-            const entrada = new Date(fechaEntrada);
-            const salida = new Date(fechaSalida);
-            
-            if (salida <= entrada) {
-                this.mostrarAlerta('La fecha de salida debe ser posterior a la de entrada', 'error');
-                document.getElementById('fecha-salida').value = '';
-                return;
-            }
- 
-            const diferencia = salida - entrada;
-            const noches = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
-            
-            document.getElementById('noches').value = noches;
-            this.reservaActual.fechaEntrada = fechaEntrada;
-            this.reservaActual.fechaSalida = fechaSalida;
-            this.reservaActual.noches = noches;
- 
-            document.getElementById('btn-siguiente-confirmacion').disabled = false;
+        
+        // Resetear campos
+        document.getElementById('fecha-entrada').value = '';
+        document.getElementById('fecha-salida').value = '';
+        document.getElementById('noches').value = '';
+        document.getElementById('btn-siguiente-confirmacion').disabled = true;
+    
+        try {
+            this.calendario = new VanillaCalendar(calendarElement, {
+                type: 'multiple',
+                settings: {
+                    lang: 'es',
+                    iso8601: false,
+                    range: {
+                        min: `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`,
+                        max: `${hoy.getFullYear() + 1}-12-31`,
+                    },
+                    selection: {
+                        day: 'multiple-ranged',
+                    }
+                },
+                actions: {
+                    clickDay: (event, self) => {
+                        console.log('Fechas seleccionadas:', self.selectedDates);
+                        this.manejarSeleccionFechas(self.selectedDates);
+                    }
+                }
+            });
+    
+            this.calendario.init();
+            console.log('Calendario inicializado correctamente');
+        } catch (error) {
+            console.error('Error al inicializar calendario:', error);
+            // Fallback a inputs de fecha normales
+            this.mostrarInputsFechaFallback();
         }
     }
  
+    // manejarSeleccionFechas(fechasSeleccionadas) {
+    //     console.log('Fechas seleccionadas:', fechasSeleccionadas);
+        
+    //     if (fechasSeleccionadas.length >= 2) {
+    //         const fechasOrdenadas = fechasSeleccionadas.sort((a, b) => new Date(a) - new Date(b));
+    //         const fechaEntrada = fechasOrdenadas[0];
+    //         const fechaSalida = fechasOrdenadas[fechasOrdenadas.length - 1];
+            
+    //         const entrada = new Date(fechaEntrada);
+    //         const salida = new Date(fechaSalida);
+            
+    //         const diferencia = salida - entrada;
+    //         const noches = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+            
+    //         if (noches > 0) {
+    //             document.getElementById('fecha-entrada').value = this.formatearFechaInput(entrada);
+    //             document.getElementById('fecha-salida').value = this.formatearFechaInput(salida);
+    //             document.getElementById('noches').value = noches;
+                
+    //             this.reservaActual.fechaEntrada = fechaEntrada;
+    //             this.reservaActual.fechaSalida = fechaSalida;
+    //             this.reservaActual.noches = noches;
+                
+    //             document.getElementById('btn-siguiente-confirmacion').disabled = false;
+                
+    //             this.mostrarAlerta(`Estadía seleccionada: ${noches} noche${noches > 1 ? 's' : ''}`, 'success');
+    //         }
+    //     } else if (fechasSeleccionadas.length === 1) {
+    //         document.getElementById('fecha-entrada').value = this.formatearFechaInput(new Date(fechasSeleccionadas[0]));
+    //         document.getElementById('fecha-salida').value = '';
+    //         document.getElementById('noches').value = '';
+    //         document.getElementById('btn-siguiente-confirmacion').disabled = true;
+            
+    //         this.mostrarAlerta('Selecciona la fecha de salida', 'info');
+    //     } else {
+    //         document.getElementById('fecha-entrada').value = '';
+    //         document.getElementById('fecha-salida').value = '';
+    //         document.getElementById('noches').value = '';
+    //         document.getElementById('btn-siguiente-confirmacion').disabled = true;
+    //     }
+    // }
+    manejarSeleccionFechas(fechasSeleccionadas) {
+        console.log('Procesando fechas:', fechasSeleccionadas);
+        
+        if (!fechasSeleccionadas || fechasSeleccionadas.length === 0) {
+            this.limpiarCamposFecha();
+            return;
+        }
+        
+        if (fechasSeleccionadas.length === 1) {
+            // Solo fecha de entrada seleccionada
+            const fechaEntrada = new Date(fechasSeleccionadas[0]);
+            document.getElementById('fecha-entrada').value = this.formatearFechaInput(fechaEntrada);
+            document.getElementById('fecha-salida').value = '';
+            document.getElementById('noches').value = '';
+            document.getElementById('btn-siguiente-confirmacion').disabled = true;
+            this.mostrarAlerta('Ahora selecciona la fecha de salida', 'info');
+            
+        } else if (fechasSeleccionadas.length >= 2) {
+            // Rango de fechas seleccionado
+            const fechasOrdenadas = fechasSeleccionadas.sort((a, b) => new Date(a) - new Date(b));
+            const fechaEntrada = fechasOrdenadas[0];
+            const fechaSalida = fechasOrdenadas[fechasOrdenadas.length - 1];
+            
+            const entrada = new Date(fechaEntrada);
+            const salida = new Date(fechaSalida);
+            
+            // Calcular diferencia en días
+            const diferenciaTiempo = salida.getTime() - entrada.getTime();
+            const noches = Math.ceil(diferenciaTiempo / (1000 * 3600 * 24));
+            
+            if (noches > 0) {
+                // Actualizar campos de texto
+                document.getElementById('fecha-entrada').value = this.formatearFechaInput(entrada);
+                document.getElementById('fecha-salida').value = this.formatearFechaInput(salida);
+                document.getElementById('noches').value = noches;
+                
+                // Guardar en reservaActual
+                this.reservaActual.fechaEntrada = fechaEntrada;
+                this.reservaActual.fechaSalida = fechaSalida;
+                this.reservaActual.noches = noches;
+                
+                // Habilitar botón siguiente
+                document.getElementById('btn-siguiente-confirmacion').disabled = false;
+                
+                this.mostrarAlerta(`✅ Perfecto! ${noches} noche${noches > 1 ? 's' : ''} seleccionada${noches > 1 ? 's' : ''}`, 'success');
+            } else {
+                this.mostrarAlerta('Error: La fecha de salida debe ser posterior a la entrada', 'error');
+                this.limpiarCamposFecha();
+            }
+        }
+    }
+ 
+    formatearFechaInput(fecha) {
+        return fecha.toLocaleDateString('es-ES', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+    
     irAPasoConfirmacion() {
         if (!this.reservaActual.fechaEntrada || !this.reservaActual.fechaSalida) {
             this.mostrarAlerta('Completa las fechas de estadía', 'error');
@@ -352,7 +474,11 @@ const tiposHabitacion = [
             </div>
         `;
     }
- 
+
+
+
+
+
     realizarReserva() {
         const reserva = {
             id: this.reservas.length + 1,

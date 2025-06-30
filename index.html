@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Reservas de Hotelity</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@2.9.0/build/vanilla-calendar.min.css" rel="stylesheet">
+    <!-- Vanilla Calendar -->
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro@2.9.0/build/vanilla-calendar.min.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -92,7 +96,7 @@
                     </div>
 
                     <!-- Fechas -->
-                    <div id="paso-fechas" class="paso-reserva hidden">
+                    <!-- <div id="paso-fechas" class="paso-reserva hidden">
                         <h2>📅 Fechas de estadía</h2>
                         <div class="form-section">
                             <div class="form-group">
@@ -108,6 +112,39 @@
                                 <input type="number" id="noches" min="1" required readonly>
                             </div>
                         </div>
+                        <div style="margin-top: 30px; display: flex; justify-content: space-between;">
+                            <button id="btn-volver-huespedes" class="btn btn-secondary">
+                                ← Volver a Huéspedes
+                            </button>
+                            <button id="btn-siguiente-confirmacion" class="btn btn-primary" disabled>
+                                Siguiente: Confirmación →
+                            </button>
+                        </div>
+                    </div> -->
+                    <div id="paso-fechas" class="paso-reserva hidden">
+                        <h2>📅 Fechas de estadía</h2>
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label>Selecciona las fechas de tu estadía:</label>
+                                <div id="calendario-reserva" style="max-width: 500px; margin: 20px auto;"></div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;">
+                                <div class="form-group">
+                                    <label>Fecha de entrada:</label>
+                                    <input type="text" id="fecha-entrada" readonly style="background: #f8f9fa;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha de salida:</label>
+                                    <input type="text" id="fecha-salida" readonly style="background: #f8f9fa;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Número de noches:</label>
+                                    <input type="number" id="noches" readonly style="background: #f8f9fa;">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div style="margin-top: 30px; display: flex; justify-content: space-between;">
                             <button id="btn-volver-huespedes" class="btn btn-secondary">
                                 ← Volver a Huéspedes
